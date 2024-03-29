@@ -14,7 +14,7 @@
 }
 
 *.app  {
-  @apply border-red-200 border
+  @apply border-red-200 border          
 }
 
 a {

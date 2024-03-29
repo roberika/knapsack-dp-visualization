@@ -19,12 +19,12 @@ function App() {
   }
 
   function completelyUselessFunction(){
-    
+
   }
 
   return (
     <>
-      <form method='post' onSubmit={handleKnapsackParameters}>
+      <form method='post' onSubmit={handleKnapsackParameters}>        
         <table>
           <thead>
             <tr>
