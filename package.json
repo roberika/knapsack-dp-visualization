@@ -1,7 +1,7 @@
 {
   "base": "https://roberika.github.io/knapsack-dp-visualization",
   "name": "knapsack-dp-visualization",
-  "private": true,
+  "private": false,
   "version": "0.1.0",
   "type": "module",
   "scripts": {
