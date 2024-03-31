@@ -27,6 +27,7 @@ function App() {
     setCapacity(capacity);
     setNumberOfItems(numberOfItems);
     createEmptyValueTable(capacity, numberOfItems);
+    createEmptyItemList(numberOfItems);
   }
 
   function handleKnapsackItems(e) {
@@ -54,6 +55,14 @@ function App() {
       table.push(row);
     }
     setValueTable(table);
+  }
+
+  function createEmptyItemList(numberOfItems) {
+    var list = []
+    for(let i = 0; i < numberOfItems; i++) {
+      list[i] = {"weight": 0, "value": 0}
+    }
+    setItemList(list);
   }
 
   function fillValueTable(itemList) {
@@ -219,7 +228,9 @@ function App() {
                         (VectorEquals(hoveredCell, [rowindex+1, colindex]) ? "above-cell" : "")))
                       }
                     >
-                      {valueTable[rowindex][colindex]}
+                      {VectorEquals(comparisonCell, [rowindex, colindex]) ? 
+                        (parseInt(valueTable[rowindex][colindex]) + parseInt(itemList[hoveredCell[0] - 1].value)) : 
+                        valueTable[rowindex][colindex]}
                     </td>
                   )}
                 </tr>
