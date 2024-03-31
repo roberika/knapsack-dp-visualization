@@ -7,6 +7,12 @@ function App() {
   const [numberOfItems, setNumberOfItems] = useState(0)
   const [itemList, setItemList] = useState([])
   const [valueTable, setValueTable] = useState([])
+  const [solutionArray, setSolutionArray] = useState([])
+  const [solutionList, setSolutionList] = useState([])
+  const [hoveredCell, setHoveredCell] = useState([])
+  const [comparisonCell, setComparisonCell] = useState([])
+  const [lessCell, setLessCell] = useState([])
+  const [moreCell, setMoreCell] = useState([])
 
   function handleKnapsackParameters(e) {
     e.preventDefault();
@@ -35,6 +41,7 @@ function App() {
     })
 
     setItemList(list);
+    fillValueTable(list);
   }
 
   function createEmptyValueTable(capacity, numberOfItems) {
@@ -47,7 +54,86 @@ function App() {
       table.push(row);
     }
     setValueTable(table);
-    console.log(table)
+  }
+
+  function fillValueTable(itemList) {
+    //fill table cells
+    let table = valueTable;
+    for (let j = 0; j < numberOfItems+1; j++) {
+      for (let i = 0; i < capacity+1; i++) {
+        fillValueTableCell(i, j, itemList, table);
+      }
+    }
+    setValueTable(table)
+    
+    //set solution array
+    let w = capacity
+    let array = []
+    for (let i = numberOfItems; i > 0; i--) {
+      if (table[i][w] > table[i-1][w]) {
+        array.push(1)
+        w = w - itemList[i - 1].weight
+        continue
+      }
+      array.push(0)
+    }
+    array = array.reverse();
+    setSolutionArray(array)
+
+    //set solution list
+    let list = []
+    for (let i = 0; i < numberOfItems; i++) {
+      if (array[i] == 1) {
+        list.push(String.fromCharCode(65 + i))
+      }
+    }
+    setSolutionList(list)
+  }
+
+  //w = current weight
+  //i = current item
+  //vTable = the value table
+  function fillValueTableCell(w, index, itemList, table) {
+    if (index <= 0 || w <= 0)
+      return 0;
+    if (itemList[index-1].weight > w)
+      return table[index][w] = fillValueTableCell(w, index - 1, itemList, table);
+    return table[index][w] = Math.max(
+      (parseInt(itemList[index-1].value) + fillValueTableCell(w - itemList[index-1].weight, index - 1, itemList, table)), 
+      fillValueTableCell(w, index - 1, itemList, table));            
+  }
+
+  function hoverValueCell(e) {
+    let rowindex = parseInt(e._targetInst.key.split("-")[0])
+    let colindex = parseInt(e._targetInst.key.split("-")[1])
+
+    setHoveredCell([rowindex, colindex])
+    if (rowindex <= 0 || itemList[rowindex - 1].weight > colindex) {
+      setComparisonCell([])
+      setLessCell([])
+      setMoreCell([])
+      return;
+    }
+
+    let comparisonCell = [rowindex-1, colindex - itemList[rowindex - 1].weight]
+    setComparisonCell(comparisonCell)
+    
+    if ((parseInt(valueTable[rowindex-1][colindex - itemList[rowindex - 1].weight])
+      + parseInt(itemList[rowindex-1].value))
+      < parseInt(valueTable[rowindex-1][colindex])) {
+      setLessCell(comparisonCell)
+      setMoreCell([rowindex-1, colindex])
+      return;
+    }
+    setLessCell([rowindex-1, colindex])
+    setMoreCell(comparisonCell)
+  }
+
+  function VectorEquals(a, b) {
+    if (a[0] == b[0] && a[1] == b[1]) {
+      return true
+    }
+    return false
   }
 
   return (
@@ -91,7 +177,7 @@ function App() {
               <tbody>
                 {numberOfItems == 0 ? <ItemInputRow index={-1}/> : ""}
                 {Array.from({ length: numberOfItems }).map((empty, index) => 
-                  <ItemInputRow index={index}/>
+                  <ItemInputRow key={index} index={index}/>
                 )}
               </tbody>
               <tfoot>
@@ -122,11 +208,32 @@ function App() {
                   {rowindex == 0 ? <th rowSpan={(numberOfItems+1)} className='header-items'>{"Items"}</th> : null}
                   <td>{rowindex}</td>
                   {Array.from({ length: (capacity+1) }).map((value, colindex) => 
-                    <td key={colindex}>{valueTable[rowindex][colindex]}</td>
+                    <td 
+                      key={rowindex + "-" + colindex}
+                      onMouseEnter={(e) => hoverValueCell(e)} 
+                      className={
+                        (VectorEquals(lessCell, [rowindex, colindex]) ? "less-cell " : 
+                        (VectorEquals(moreCell, [rowindex, colindex]) ? "more-cell " : "")) +
+                        (VectorEquals(comparisonCell, [rowindex, colindex]) ? "comparison-cell" :
+                        (VectorEquals(hoveredCell, [rowindex, colindex]) ? "hovered-cell" :
+                        (VectorEquals(hoveredCell, [rowindex+1, colindex]) ? "above-cell" : "")))
+                      }
+                    >
+                      {valueTable[rowindex][colindex]}
+                    </td>
                   )}
                 </tr>
               )}
             </tbody>
+            {solutionArray.length == 0 ? null :
+              <tfoot>
+                <tr>
+                  <td colSpan={capacity+3}>
+                    {"Solution: [" + solutionArray.toString() + "] or [" + solutionList.toString() + "]"}
+                  </td>
+                </tr>
+              </tfoot>
+            }
           </table>
         }
       </div>
@@ -143,7 +250,7 @@ function SubmitButton({children}) {
 }
 
 function ItemInputRow({index}) {
-  return <tr key={index}>
+  return <tr>
     <td className='text-center'>{index + 1}</td>
     <ItemInputCell index={index} text="Value" disabled={index == -1}/>
     <ItemInputCell index={index} text="Weight" disabled={index == -1}/>
