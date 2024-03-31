@@ -1,8 +1,5 @@
-# React + Vite
+# 0/1 Knapsack Dynamic Programming Visualization
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+This was done because I just can't visualize it for the longest time. I tried making it in Excel, but that didn't work so here we are. Ultimately the classroom was just not the best environment to slowly visualize it and I just needed to properly sit down and study it, but it has been a fun project and it looked pretty cool, so I can't complain. Special thanks to Geek for Geeks for helping Javatpoint for helping me understand the algorithm.
 
-Currently, two official plugins are available:
-
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+Made with React, Tailwind, and Vite. Hosted on Github Pages.
