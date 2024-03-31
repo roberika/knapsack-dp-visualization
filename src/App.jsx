@@ -200,13 +200,13 @@ function App() {
               </tr>
               <tr>
                 {Array.from({ length: (capacity+1) }).map((value, colindex) => 
-                  <td key={colindex}>{colindex}</td>
+                  <td className='header-numbers' key={colindex}>{colindex}</td>
                 )}
               </tr>
               {Array.from({ length: (numberOfItems+1) }).map((value, rowindex) => 
                 <tr key={rowindex}>
                   {rowindex == 0 ? <th rowSpan={(numberOfItems+1)} className='header-items'>{"Items"}</th> : null}
-                  <td>{rowindex}</td>
+                  <td className='header-numbers'>{rowindex}</td>
                   {Array.from({ length: (capacity+1) }).map((value, colindex) => 
                     <td 
                       key={rowindex + "-" + colindex}
@@ -236,6 +236,16 @@ function App() {
             }
           </table>
         }
+        <br/>
+        <p>
+          A Dynamic Programming approach to 0/1 Knapsack, is done by considering each and every subset of the problem, from the least amount of items and capacity, up until the upper bounds of the problem, which is the entire item list and the maximum capacity. This is done by considering whether taking an item is worth more than the benefit of skipping it. We use a memoization table to so that we could know those two values. The number on the last row and the last column would be the global optimum to the problem.
+        </p>
+        <p>
+          The values or cells are evaluated by considering 2 other cells. The cell immediately above it, which is the value of the highest possible value of that weight count plus the value of skipping the item (which is zero), and the cell some distance to the left of it, which is the value of the highest possible value of a previous weight count plus the value of the item taken. If the item could not be taken, it simply picks the value above it, the last known optimal value.
+        </p>
+        <p>
+          To see the algorithm in effect, you could hover over a cell on the table. The green cell is the cell that has more value, while the blue is one that has less value. If there's only one value considered, it's highlighted in grey. For ease of learning, the value to the left is also added by the value of the item taken.
+        </p>
       </div>
     </div>
   )
